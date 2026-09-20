@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Struk #TRX-{{ trx.id }}</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 12px;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .struk-container {
+            max-width: 280px;
+            margin: auto;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .line {
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 2px 0;
+        }
+
+        @media print {
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body onload="window.print()">
+
+    <div class="struk-container">
+        <div class="text-center">
+            <h3 style="margin:0;">POS TOKO</h3>
+            <p style="margin:2px 0;">Struk Pembayaran</p>
+        </div>
+
+        <div class="line"></div>
+        <p style="margin:2px 0;">No. TRX : #TRX-{{ trx.id }}</p>
+        <p style="margin:2px 0;">Tgl : {{ trx.tanggal }}</p>
+        <div class="line"></div>
+
+        <table>
+            {% for d in detail %}
+            <tr>
+                <td colspan="2"><strong>{{ d.nama_produk }}</strong></td>
+            </tr>
+            <tr>
+                <td>{{ d.jumlah }} x {{ "{:,}".format(d.harga_satuan) }}</td>
+                <td class="text-right">Rp {{ "{:,}".format(d.subtotal) }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="line"></div>
+
+        <table>
+            <tr>
+                <td>Total :</td>
+                <td class="text-right"><strong>Rp {{ "{:,}".format(trx.total_harga) }}</strong></td>
+            </tr>
+            <tr>
+                <td>Bayar :</td>
+                <td class="text-right">Rp {{ "{:,}".format(trx.bayar) }}</td>
+            </tr>
+            <tr>
+                <td>Kembali :</td>
+                <td class="text-right">Rp {{ "{:,}".format(trx.kembalian) }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+        <div class="text-center">
+            <p style="margin:5px 0;">-- Terima Kasih --</p>
+        </div>
+
+        <button onclick="window.print()" class="no-print"
+            style="width:100%; margin-top:15px; padding:6px; cursor:pointer;">🖨️ Cetak Struk</button>
+    </div>
+
+</body>
+
+</html>

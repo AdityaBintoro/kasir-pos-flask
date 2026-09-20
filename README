@@ -1,0 +1,40 @@
+# 🏪 Sistem Kasir POS (Point of Sale) - Web-Based
+
+Aplikasi kasir/POS sederhana berbasis web yang dirancang untuk mengelola transaksi penjualan toko, manajemen stok produk, dan perhitungan total belanja secara *real-time*.
+
+---
+
+## 🎨 Tema Tampilan & Antarmuka
+Aplikasi ini dihiasi dengan perpaduan warna modern:
+- **Hijau (Emerald)**: Elemen utama, status sukses, dan total tagihan.
+- **Tosca (Teal)**: Aksesibilitas tombol aksi (`+ Tambah`, `Edit`) dan detail info stok.
+- **Putih & Soft Background**: Tampilan bersih, minimalis, dan nyaman di mata pengguna.
+
+---
+
+## ✨ Fitur Utama
+- **Katalog & Stok Produk**: Menampilkan daftar produk beserta harga dan stok tersisa. Tombol otomatis *disabled* jika stok habis.
+- **Keranjang Belanja**: Menambah item ke keranjang, menghitung total otomatis, serta menghapus atau mereset isi keranjang.
+- **Modal Edit Produk (Bootstrap 5)**: Mengedit data produk (nama, harga, dan stok) langsung menggunakan modal tanpa perlu *reload* halaman baru.
+- **Proses Checkout**: Menghitung kembalian uang pelanggan dan memvalidasi nominal pembayaran minimum.
+- **Notifikasi Pesan**: Memberikan umpan balik instan (sukses/error) setelah proses transaksi atau manipulasi data.
+
+---
+
+## 🛠️ Teknologi yang Digunakan
+- **Backend**: Python (Flask)
+- **Database**: SQLite
+- **Frontend**: HTML5, Tailwind CSS (Styling Utama), Bootstrap 5 (Modal Component)
+- **Templating Engine**: Jinja2
+
+---
+
+## 🚀 Cara Menjalankan Project
+
+### 1. Prasyarat
+Pastikan Python sudah terinstall di perangkat Anda.
+
+### 2. Cloning Repositori
+```bash
+git clone https://github.com/AdityaBintoro/kasir-pos-flask.git
+cd kasir-pos-flask

@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center mb-5 sm:mb-6">
+    <h1 class="text-xl sm:text-2xl font-bold text-emerald-950 flex items-center gap-2">
+        📜 Riwayat Transaksi
+    </h1>
+    <a href="/" class="self-start sm:self-auto text-sm font-semibold text-teal-700 hover:underline">&laquo; Kembali ke
+        Kasir</a>
+</div>
+
+<div class="bg-white p-3 sm:p-6 rounded-2xl shadow-sm border border-emerald-100">
+    <div class="overflow-x-auto">
+        <table class="w-full min-w-[650px] text-left text-sm">
+            <thead class="bg-emerald-50 text-emerald-900 text-xs font-bold uppercase">
+                <tr>
+                    <th class="p-3 rounded-l-lg">No. TRX</th>
+                    <th class="p-3">Tanggal</th>
+                    <th class="p-3">Total Tagihan</th>
+                    <th class="p-3">Bayar</th>
+                    <th class="p-3">Kembali</th>
+                    <th class="p-3 text-center rounded-r-lg">Struk</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-emerald-50">
+                {% for trx in transaksi_list %}
+                <tr class="hover:bg-emerald-50/30">
+                    <td class="p-3 font-bold text-teal-800">#TRX-{{ trx.id }}</td>
+                    <td class="p-3 text-gray-600">{{ trx.tanggal }}</td>
+                    <td class="p-3 font-extrabold text-emerald-700">Rp {{ "{:,}".format(trx.total_harga) }}</td>
+                    <td class="p-3 text-gray-700">Rp {{ "{:,}".format(trx.bayar) }}</td>
+                    <td class="p-3 text-gray-700">Rp {{ "{:,}".format(trx.kembalian) }}</td>
+                    <td class="p-3 text-center">
+                        <a href="/struk/{{ trx.id }}" target="_blank"
+                            class="inline-block whitespace-nowrap bg-teal-50 hover:bg-teal-100 text-teal-700 border border-teal-200 px-3 py-1 rounded-lg text-xs font-bold transition">
+                            🖨️ Cetak
+                        </a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="p-6 text-center text-gray-400">Belum ada riwayat transaksi.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

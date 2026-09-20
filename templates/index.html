@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <header
+        class="mb-5 sm:mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-b border-emerald-100 pb-4">
+        <div>
+            <h1 class="text-2xl sm:text-3xl font-bold text-emerald-950 flex items-center gap-2">
+                🏪 Sistem Kasir Toko
+            </h1>
+            <p class="text-teal-700 text-sm font-medium mt-1">Aplikasi Kasir POS</p>
+        </div>
+        <span
+            class="self-start sm:self-auto bg-teal-100 text-teal-800 text-xs font-semibold px-3 py-1 rounded-full border border-teal-200">
+            Online POS
+        </span>
+    </header>
+
+    <!-- Notifikasi Pesan (Sukses / Error) -->
+    {% if session.get('error') %}
+    <div
+        class="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-xl mb-4 shadow-sm flex items-center gap-2">
+        <span>⚠️</span>
+        <div>{{ session.pop('error') }}</div>
+    </div>
+    {% endif %}
+
+    {% if session.get('sukses') %}
+    <div
+        class="bg-emerald-100 border border-emerald-400 text-emerald-800 px-4 py-3 rounded-xl mb-4 shadow-sm flex items-center gap-2">
+        <span>✅</span>
+        <div>{{ session.pop('sukses') }}</div>
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Katalog Produk -->
+        <div class="lg:col-span-2 bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-emerald-100">
+            <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between mb-4">
+                <h2 class="text-lg sm:text-xl font-bold text-emerald-900 flex items-center gap-2">
+                    <span>📦</span> Daftar Produk
+                </h2>
+                <span class="text-xs text-teal-600 bg-teal-50 px-2.5 py-1 rounded-md font-medium">
+                    {{ produk_list|length }} Produk Tersedia
+                </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {% for p in produk_list %}
+                <div
+                    class="border border-emerald-100 rounded-xl p-4 bg-white hover:shadow-md transition-all flex flex-col justify-between group">
+                    <div>
+                        <h3 class="font-bold text-gray-800 group-hover:text-teal-700 transition">{{ p.nama }}</h3>
+                        <p class="text-emerald-600 font-extrabold text-lg mt-1">
+                            Rp {{ "{:,}".format(p.harga | default(0)) }}
+                        </p>
+                        <p class="text-xs text-gray-500 mt-1">Stok: <span class="font-medium text-teal-800">{{
+                                p.stok }}</span></p>
+                    </div>
+
+                    {% if p.stok > 0 %}
+                    <form action="{{ url_for('tambah_keranjang', produk_id=p.id) }}" method="POST"
+                        class="mt-4 flex gap-2 items-center">
+                        <!-- Input Qty: default 1, min 1, max sesuai stok -->
+                        <input type="number" name="qty" value="1" min="1" max="{{ p.stok }}"
+                            class="w-16 border border-gray-300 rounded-lg px-2 py-1.5 text-center text-sm font-medium focus:ring-2 focus:ring-teal-500 focus:outline-none">
+
+                        <!-- Tombol Submit -->
+                        <button type="submit"
+                            class="flex-1 bg-teal-600 hover:bg-teal-700 text-white py-2 rounded-lg font-semibold text-sm transition shadow-sm active:scale-[0.98]">
+                            + Tambah
+                        </button>
+                    </form>
+                    {% else %}
+                    <button disabled
+                        class="mt-4 w-full bg-gray-100 text-gray-400 py-2 rounded-lg font-medium text-sm cursor-not-allowed">
+                        Stok Habis
+                    </button>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Keranjang Belanja & Form Pembayaran -->
+        <div
+            class="bg-white p-4 sm:p-6 rounded-2xl shadow-sm border border-emerald-100 flex flex-col justify-between h-fit">
+            <div>
+                <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-100">
+                    <h2 class="text-lg sm:text-xl font-bold text-emerald-900 flex items-center gap-2">
+                        <span>🛒</span> Keranjang
+                    </h2>
+                    {% if keranjang %}
+                    <form action="/clear_keranjang" method="POST">
+                        <button type="submit"
+                            class="text-xs text-red-500 hover:text-red-700 font-medium hover:underline">
+                            Reset Keranjang
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+
+                <!-- Item Keranjang -->
+                <div class="space-y-3 max-h-60 overflow-y-auto mb-4 pr-1">
+                    {% if not keranjang %}
+                    <div class="text-center py-8">
+                        <span class="text-3xl">🛍️</span>
+                        <p class="text-gray-400 text-sm mt-2">Belum ada produk dipilih</p>
+                    </div>
+                    {% else %}
+                    {% for id, item in keranjang.items() %}
+                    <div
+                        class="flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center bg-teal-50/50 p-3 rounded-xl border border-teal-100">
+                        <div class="text-sm min-w-0">
+                            <p class="font-semibold text-gray-800">{{ item.nama | default('Produk') }}</p>
+                            <p class="text-teal-700 text-xs mt-0.5">{{ item.qty }} x Rp {{ "{:,}".format(item.harga
+                                | default(0)) }}</p>
+                        </div>
+                        <div class="flex items-center justify-between gap-3">
+                            <span class="font-bold text-sm text-emerald-700 whitespace-nowrap">Rp {{
+                                "{:,}".format((item.harga |
+                                default(0)) * item.qty) }}</span>
+                            <form action="/hapus_keranjang/{{ item.id }}" method="POST">
+                                <button type="submit"
+                                    class="text-gray-400 hover:text-red-500 font-bold text-sm transition">✕</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+                </div>
+
+                <!-- Ringkasan & Form Bayar -->
+                <form action="/checkout" method="POST" class="border-t border-emerald-100 pt-4 space-y-4">
+                    <div
+                        class="flex flex-wrap justify-between gap-2 items-center font-bold text-base sm:text-lg text-emerald-950 bg-emerald-50 p-3 rounded-xl">
+                        <span>Total Tagihan:</span>
+                        <span class="text-emerald-600 text-lg sm:text-xl whitespace-nowrap">Rp {{
+                            "{:,}".format(total_harga | default(0))
+                            }}</span>
+                    </div>
+
+                    {% if keranjang %}
+                    <div class="space-y-1.5">
+                        <label for="bayar" class="font-semibold text-gray-700 text-xs uppercase tracking-wider">Nominal
+                            Bayar
+                            (Rp):</label>
+                        <input type="number" id="bayar" name="bayar" min="{{ total_harga | default(0) }}" required
+                            placeholder="0"
+                            class="w-full border border-teal-200 rounded-xl px-3 py-2 text-right font-bold text-gray-800 focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition bg-white">
+                    </div>
+
+                    <button type="submit"
+                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white py-3 rounded-xl font-bold shadow-sm transition active:scale-[0.98]">
+                        Proses Transaksi
+                    </button>
+                    {% else %}
+                    <button disabled
+                        class="w-full bg-gray-100 text-gray-400 py-3 rounded-xl font-bold cursor-not-allowed">
+                        Proses Transaksi
+                    </button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
